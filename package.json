@@ -26,7 +26,4 @@
   },
   "devDependencies": {},
   "optionalDependencies": {},
-  "scripts": {
-    "test": "node test/test-abstract-socket.js"
-  }
 }
