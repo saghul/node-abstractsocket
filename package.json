@@ -1,0 +1,32 @@
+{
+  "author": {
+    "name": "Saúl Ibarra Corretgé",
+    "email": "saghul@gmail.com",
+    "url": "http://bettercallsaghul.com"
+  },
+  "name": "abstract-socket",
+  "version": "0.0.1",
+  "description": "Abstract domain socket support",
+  "main": "lib/abstract_socket",
+  "homepage": "https://github.com/saghul/node-abstractsocket",
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/saghul/node-abstractsocket/LICENSE"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/saghul/node-abstractsocket.git"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "bindings": "~1.1.1",
+    "nan": "~1.1.0"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "scripts": {
+    "test": "node test/test-abstract-socket.js"
+  }
+}
