@@ -10,6 +10,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 
@@ -161,10 +162,48 @@ out:
 }
 
 
+NAN_METHOD(Close) {
+    NanScope();
+    int err;
+    int fd;
+
+    assert(args.Length() == 1);
+    fd = args[0]->Int32Value();
+
+    // Suppress EINTR and EINPROGRESS.  EINTR means that the close() system call
+    // was interrupted by a signal.  According to POSIX, the file descriptor is
+    // in an undefined state afterwards.  It's not safe to try closing it again
+    // because it may have been closed, despite the signal.  If we call close()
+    // again, then it would either:
+    //
+    //   a) fail with EBADF, or
+    //
+    //   b) close the wrong file descriptor if another thread or a signal handler
+    //      has reused it in the mean time.
+    //
+    // Neither is what we want but scenario B is particularly bad.  Not retrying
+    // the close() could, in theory, lead to file descriptor leaks but, in
+    // practice, operating systems do the right thing and close the file
+    // descriptor, regardless of whether the operation was interrupted by
+    // a signal.
+    //
+    // EINPROGRESS is benign.  It means the close operation was interrupted but
+    // that the file descriptor has been closed or is being closed in the
+    // background.  It's informative, not an error.
+    err = 0;
+    if (close(fd))
+      if (errno != EINTR && errno != EINPROGRESS)
+        err = -errno;
+
+    NanReturnValue(NanNew(err));
+}
+
+
 void Initialize(Handle<Object> target) {
     target->Set(NanNew("socket"), NanNew<FunctionTemplate>(Socket)->GetFunction());
     target->Set(NanNew("bind"), NanNew<FunctionTemplate>(Bind)->GetFunction());
     target->Set(NanNew("connect"), NanNew<FunctionTemplate>(Connect)->GetFunction());
+    target->Set(NanNew("close"), NanNew<FunctionTemplate>(Close)->GetFunction());
 }
 
 
