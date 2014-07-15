@@ -5,8 +5,8 @@
     "url": "http://bettercallsaghul.com"
   },
   "name": "abstract-socket",
-  "version": "0.0.1",
-  "description": "Abstract domain socket support",
+  "version": "0.1.0",
+  "description": "Abstract domain socket support for Node",
   "main": "lib/abstract_socket",
   "homepage": "https://github.com/saghul/node-abstractsocket",
   "license": {
