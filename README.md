@@ -8,6 +8,52 @@ Because I like my sockets like my Picasso paintings: abstract.
 Go read this: http://man7.org/linux/man-pages/man7/unix.7.html, I'll wait.
 
 
+## Examples
+
+Server:
+
+```js
+// abstract echo server
+var abs = require('./lib/abstract_socket');
+
+process.on('uncaughtException', function(err) {
+      console.log('Caught exception: ' + err);
+});
+
+var server = abs.startListening('\0foo', function(c) { //'connection' listener
+  console.log('client connected');
+  c.on('end', function() {
+    console.log('client disconnected');
+  });
+  c.write('hello\r\n');
+  c.pipe(c);
+});
+
+```
+
+Client:
+
+```js
+var abs = require('./lib/abstract_socket');
+
+var client = abs.connect('\0foo', function() { //'connect' listener
+    console.log('client connected');
+});
+
+client.on('data', function(data) {
+    console.log(data.toString());
+});
+
+process.stdin.setEncoding('utf8');
+process.stdin.on('readable', function() {
+    var chunk = process.stdin.read();
+    if (chunk !== null)
+        client.write(chunk);
+});
+
+```
+
+
 ## API
 
 ### abs.startListening(name, connectionListener, [listeningListener])
