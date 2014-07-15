@@ -26,150 +26,145 @@ using v8::Value;
 
 #if !defined(SOCK_NONBLOCK)
 void SetNonBlock(int fd) {
-  int flags;
-  int r;
+    int flags;
+    int r;
 
-  flags = fcntl(fd, F_GETFL);
-  assert(flags != -1);
+    flags = fcntl(fd, F_GETFL);
+    assert(flags != -1);
 
-  r = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-  assert(r != -1);
+    r = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    assert(r != -1);
 }
 #endif
 
 
 #if !defined(SOCK_CLOEXEC)
 void SetCloExec(int fd) {
-  int flags;
-  int r;
+    int flags;
+    int r;
 
-  flags = fcntl(fd, F_GETFD);
-  assert(flags != -1);
+    flags = fcntl(fd, F_GETFD);
+    assert(flags != -1);
 
-  r = fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
-  assert(r != -1);
+    r = fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+    assert(r != -1);
 }
 #endif
 
 
 NAN_METHOD(Socket) {
-  NanScope();
-  int fd;
-  int type;
+    NanScope();
+    int fd;
+    int type;
 
-  assert(args.Length() == 0);
+    assert(args.Length() == 0);
 
-  type = SOCK_STREAM;
+    type = SOCK_STREAM;
 #if defined(SOCK_NONBLOCK)
-  type |= SOCK_NONBLOCK;
+    type |= SOCK_NONBLOCK;
 #endif
 #if defined(SOCK_CLOEXEC)
-  type |= SOCK_CLOEXEC;
+    type |= SOCK_CLOEXEC;
 #endif
 
-  fd = socket(AF_UNIX, type, 0);
-  if (fd == -1) {
-    fd = -errno;
-    goto out;
-  }
+    fd = socket(AF_UNIX, type, 0);
+    if (fd == -1) {
+        fd = -errno;
+        goto out;
+    }
 
 #if !defined(SOCK_NONBLOCK)
-  SetNonBlock(fd);
+    SetNonBlock(fd);
 #endif
 #if !defined(SOCK_CLOEXEC)
-  SetCloExec(fd);
+    SetCloExec(fd);
 #endif
 
 out:
-  NanReturnValue(NanNew(fd));
+    NanReturnValue(NanNew(fd));
 }
 
 
 NAN_METHOD(Bind) {
-  NanScope();
-  sockaddr_un s;
-  socklen_t namelen;
-  int err;
-  int fd;
-  unsigned int len;
+    NanScope();
+    sockaddr_un s;
+    socklen_t namelen;
+    int err;
+    int fd;
+    unsigned int len;
 
-  assert(args.Length() == 2);
+    assert(args.Length() == 2);
 
-  fd = args[0]->Int32Value();
-  String::Utf8Value path(args[1]);
+    fd = args[0]->Int32Value();
+    String::Utf8Value path(args[1]);
 
-  if ((*path)[0] != '\0') {
-      err = -EINVAL;
-      goto out;
-  }
+    if ((*path)[0] != '\0') {
+        err = -EINVAL;
+        goto out;
+    }
 
-  len = path.length();
-  if (len > sizeof(s.sun_path)) {
-      err = -EINVAL;
-      goto out;
-  }
+    len = path.length();
+    if (len > sizeof(s.sun_path)) {
+        err = -EINVAL;
+        goto out;
+    }
 
-  memset(&s, 0, sizeof s);
-  memcpy(s.sun_path, *path, len);
-  s.sun_family = AF_UNIX;
-  namelen = offsetof(struct sockaddr_un, sun_path) + len;
+    memset(&s, 0, sizeof s);
+    memcpy(s.sun_path, *path, len);
+    s.sun_family = AF_UNIX;
+    namelen = offsetof(struct sockaddr_un, sun_path) + len;
 
-  err = 0;
-  if (bind(fd, reinterpret_cast<sockaddr*>(&s), namelen))
-    err = -errno;
+    err = 0;
+    if (bind(fd, reinterpret_cast<sockaddr*>(&s), namelen))
+        err = -errno;
 
 out:
-  NanReturnValue(NanNew(err));
+    NanReturnValue(NanNew(err));
 }
 
 
 NAN_METHOD(Connect) {
-  NanScope();
-  sockaddr_un s;
-  socklen_t namelen;
-  int err;
-  int fd;
-  unsigned int len;
+    NanScope();
+    sockaddr_un s;
+    socklen_t namelen;
+    int err;
+    int fd;
+    unsigned int len;
 
-  assert(args.Length() == 2);
+    assert(args.Length() == 2);
 
-  fd = args[0]->Int32Value();
-  String::Utf8Value path(args[1]);
+    fd = args[0]->Int32Value();
+    String::Utf8Value path(args[1]);
 
-  if ((*path)[0] != '\0') {
-      err = -EINVAL;
-      goto out;
-  }
+    if ((*path)[0] != '\0') {
+        err = -EINVAL;
+        goto out;
+    }
 
-  len = path.length();
-  if (len > sizeof(s.sun_path)) {
-      err = -EINVAL;
-      goto out;
-  }
+    len = path.length();
+    if (len > sizeof(s.sun_path)) {
+        err = -EINVAL;
+        goto out;
+    }
 
-  memset(&s, 0, sizeof s);
-  memcpy(s.sun_path, *path, len);
-  s.sun_family = AF_UNIX;
-  namelen = offsetof(struct sockaddr_un, sun_path) + len;
+    memset(&s, 0, sizeof s);
+    memcpy(s.sun_path, *path, len);
+    s.sun_family = AF_UNIX;
+    namelen = offsetof(struct sockaddr_un, sun_path) + len;
 
-  err = 0;
-  if (connect(fd, reinterpret_cast<sockaddr*>(&s), namelen))
-    err = -errno;
+    err = 0;
+    if (connect(fd, reinterpret_cast<sockaddr*>(&s), namelen))
+        err = -errno;
 
 out:
-  NanReturnValue(NanNew(err));
+    NanReturnValue(NanNew(err));
 }
 
 
 void Initialize(Handle<Object> target) {
-  target->Set(NanNew("socket"),
-              NanNew<FunctionTemplate>(Socket)->GetFunction());
-
-  target->Set(NanNew("bind"),
-              NanNew<FunctionTemplate>(Bind)->GetFunction());
-
-  target->Set(NanNew("connect"),
-              NanNew<FunctionTemplate>(Connect)->GetFunction());
+    target->Set(NanNew("socket"), NanNew<FunctionTemplate>(Socket)->GetFunction());
+    target->Set(NanNew("bind"), NanNew<FunctionTemplate>(Bind)->GetFunction());
+    target->Set(NanNew("connect"), NanNew<FunctionTemplate>(Connect)->GetFunction());
 }
 
 
