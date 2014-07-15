@@ -16,11 +16,7 @@ Server:
 // abstract echo server
 var abs = require('./lib/abstract_socket');
 
-process.on('uncaughtException', function(err) {
-      console.log('Caught exception: ' + err);
-});
-
-var server = abs.startListening('\0foo', function(c) { //'connection' listener
+var server = abs.createServer(function(c) { //'connection' listener
   console.log('client connected');
   c.on('end', function() {
     console.log('client disconnected');
@@ -28,6 +24,7 @@ var server = abs.startListening('\0foo', function(c) { //'connection' listener
   c.write('hello\r\n');
   c.pipe(c);
 });
+server.listen('\0foo');
 
 ```
 
@@ -56,17 +53,25 @@ process.stdin.on('readable', function() {
 
 ## API
 
-### abs.startListening(name, connectionListener, [listeningListener])
+### abs.createServer(connectionListener)
 
-Returns a new net.Server object which has been bound to the given path
-and it's already listening. NOTE: you must prepend the path with
+Returns a new `AbstractSocketServer` object. `listen` can be called on
+it passing the name of the abstract socket to bind to and listen, it follows
+the API used for normal Unix domain sockets. NOTE: you must prepend the path with
 the NULL byte ('\0') to indicate it's an abstract socket.
 
-Throws an exception if the `socket(2)` or `listen(2)` system calls fail,
-or the given `name` is invalid.
+Throws an exception if the `socket(2)` system call fails.
 
-The optional `listeningListener` argument is added as a listener for the
-`'listening'` event.
+### AbstractSocketServer.listen(name, [callback]
+
+Binds the server to the specified abstract socket name.
+
+Throws an exception if the `bind(2)` system call fails, or the given `name`
+is invalid.
+
+This function is asynchronous. When the server has been bound, 'listening' event
+will be emitted. the last parameter callback will be added as an listener for the
+'listening' event.
 
 ### abs.connect(name, connectListener)
 
@@ -77,10 +82,12 @@ socket.
 Returns a new and connected net.Socket object.
 
 Throws an exception if the `socket(2)` or `connect(2)` system calls fail,
-or the given `name` is invalid;
+or the given `name` is invalid.
 
 
 ## Thanks
 
 I borrowed massive amounts of inspiration/code from node-unix-dgram by @bnoordhuis :-)
+
+@mmalecki taught me how to inherit like a pro.
 
