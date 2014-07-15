@@ -98,16 +98,21 @@ NAN_METHOD(Bind) {
   fd = args[0]->Int32Value();
   String::Utf8Value path(args[1]);
 
+  if ((*path)[0] != '\0') {
+      err = -EINVAL;
+      goto out;
+  }
+
   len = path.length();
-  if (len > sizeof(s.sun_path)-1) {
+  if (len > sizeof(s.sun_path)) {
       err = -EINVAL;
       goto out;
   }
 
   memset(&s, 0, sizeof s);
-  memcpy(s.sun_path + 1, *path, len);
+  memcpy(s.sun_path, *path, len);
   s.sun_family = AF_UNIX;
-  namelen = offsetof(struct sockaddr_un, sun_path) + 1 + len;
+  namelen = offsetof(struct sockaddr_un, sun_path) + len;
 
   err = 0;
   if (bind(fd, reinterpret_cast<sockaddr*>(&s), namelen))
@@ -131,16 +136,21 @@ NAN_METHOD(Connect) {
   fd = args[0]->Int32Value();
   String::Utf8Value path(args[1]);
 
+  if ((*path)[0] != '\0') {
+      err = -EINVAL;
+      goto out;
+  }
+
   len = path.length();
-  if (len > sizeof(s.sun_path)-1) {
+  if (len > sizeof(s.sun_path)) {
       err = -EINVAL;
       goto out;
   }
 
   memset(&s, 0, sizeof s);
-  memcpy(s.sun_path + 1, *path, len);
+  memcpy(s.sun_path, *path, len);
   s.sun_family = AF_UNIX;
-  namelen = offsetof(struct sockaddr_un, sun_path) + 1 + len;
+  namelen = offsetof(struct sockaddr_un, sun_path) + len;
 
   err = 0;
   if (connect(fd, reinterpret_cast<sockaddr*>(&s), namelen))
