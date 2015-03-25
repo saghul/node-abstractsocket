@@ -24,6 +24,7 @@
     "bindings": "~1.1.1",
     "nan": "~1.1.0"
   },
+  "os": [ "linux" ],
   "devDependencies": {},
   "optionalDependencies": {}
 }
