@@ -5,7 +5,7 @@
     "url": "http://bettercallsaghul.com"
   },
   "name": "abstract-socket",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Abstract domain socket support for Node / io.js",
   "main": "lib/abstract_socket",
   "homepage": "https://github.com/saghul/node-abstractsocket",
