@@ -2,6 +2,8 @@
 
 Because I like my sockets like my Picasso paintings: abstract.
 
+[![NPM](https://nodei.co/npm/abstract-socket.png)](https://nodei.co/npm/abstract-socket/)
+
 
 ## Abstract what?
 
