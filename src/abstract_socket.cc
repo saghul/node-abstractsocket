@@ -18,7 +18,6 @@
 namespace {
 
 using v8::FunctionTemplate;
-using v8::Handle;
 using v8::Local;
 using v8::Object;
 using v8::String;
@@ -54,11 +53,11 @@ void SetCloExec(int fd) {
 
 
 NAN_METHOD(Socket) {
-    NanScope();
+    Nan::HandleScope scope;
     int fd;
     int type;
 
-    assert(args.Length() == 0);
+    assert(info.Length() == 0);
 
     type = SOCK_STREAM;
 #if defined(SOCK_NONBLOCK)
@@ -82,22 +81,22 @@ NAN_METHOD(Socket) {
 #endif
 
 out:
-    NanReturnValue(NanNew(fd));
+    info.GetReturnValue().Set(fd);
 }
 
 
 NAN_METHOD(Bind) {
-    NanScope();
+    Nan::HandleScope scope;
     sockaddr_un s;
     socklen_t namelen;
     int err;
     int fd;
     unsigned int len;
 
-    assert(args.Length() == 2);
+    assert(info.Length() == 2);
 
-    fd = args[0]->Int32Value();
-    String::Utf8Value path(args[1]);
+    fd = info[0]->Int32Value();
+    String::Utf8Value path(info[1]);
 
     if ((*path)[0] != '\0') {
         err = -EINVAL;
@@ -120,22 +119,22 @@ NAN_METHOD(Bind) {
         err = -errno;
 
 out:
-    NanReturnValue(NanNew(err));
+    info.GetReturnValue().Set(err);
 }
 
 
 NAN_METHOD(Connect) {
-    NanScope();
+    Nan::HandleScope scope;
     sockaddr_un s;
     socklen_t namelen;
     int err;
     int fd;
     unsigned int len;
 
-    assert(args.Length() == 2);
+    assert(info.Length() == 2);
 
-    fd = args[0]->Int32Value();
-    String::Utf8Value path(args[1]);
+    fd = info[0]->Int32Value();
+    String::Utf8Value path(info[1]);
 
     if ((*path)[0] != '\0') {
         err = -EINVAL;
@@ -158,17 +157,17 @@ NAN_METHOD(Connect) {
         err = -errno;
 
 out:
-    NanReturnValue(NanNew(err));
+    info.GetReturnValue().Set(err);
 }
 
 
 NAN_METHOD(Close) {
-    NanScope();
+    Nan::HandleScope scope;
     int err;
     int fd;
 
-    assert(args.Length() == 1);
-    fd = args[0]->Int32Value();
+    assert(info.Length() == 1);
+    fd = info[0]->Int32Value();
 
     // Suppress EINTR and EINPROGRESS.  EINTR means that the close() system call
     // was interrupted by a signal.  According to POSIX, the file descriptor is
@@ -195,15 +194,19 @@ NAN_METHOD(Close) {
       if (errno != EINTR && errno != EINPROGRESS)
         err = -errno;
 
-    NanReturnValue(NanNew(err));
+    info.GetReturnValue().Set(err);
 }
 
 
-void Initialize(Handle<Object> target) {
-    target->Set(NanNew("socket"), NanNew<FunctionTemplate>(Socket)->GetFunction());
-    target->Set(NanNew("bind"), NanNew<FunctionTemplate>(Bind)->GetFunction());
-    target->Set(NanNew("connect"), NanNew<FunctionTemplate>(Connect)->GetFunction());
-    target->Set(NanNew("close"), NanNew<FunctionTemplate>(Close)->GetFunction());
+void Initialize(Local<Object> target) {
+    target->Set(Nan::New("socket").ToLocalChecked(),
+                Nan::New<FunctionTemplate>(Socket)->GetFunction());
+    target->Set(Nan::New("bind").ToLocalChecked(),
+                Nan::New<FunctionTemplate>(Bind)->GetFunction());
+    target->Set(Nan::New("connect").ToLocalChecked(),
+                Nan::New<FunctionTemplate>(Connect)->GetFunction());
+    target->Set(Nan::New("close").ToLocalChecked(),
+                Nan::New<FunctionTemplate>(Close)->GetFunction());
 }
 
 
