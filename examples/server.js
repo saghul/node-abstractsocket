@@ -9,5 +9,8 @@ require('../lib/abstract_socket')
             .pipe(client)
             .write('hello from server\r\n');
     })
+    .on('error', err => {
+        console.log('server error', err);
+    })
     .listen('\0foo2');
 
