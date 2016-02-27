@@ -1,17 +1,23 @@
 'use strict';
-const abs = require('./lib/abstract_socket');
 
-const client = abs.connect('\0foo2', function() { //'connect' listener
-    console.log('client connected');
-});
+const client = require('../lib/abstract_socket')
+    .connect('\0foo2', () => { //'connect' listener
+        console.log('client connected');
+    })
+    .on('data', data => {
+        console.log(data.toString());
+    })
+    .on('error', err => {
+        console.log('caught', err);
+    })
+    .on('end', () => {
+        console.log('client ended');
+    });
 
-client.on('data', function(data) {
-    console.log(data.toString());
-});
+process.stdin.setEncoding('utf8')
+    .on('readable', () => {
+        const chunk = process.stdin.read();
+        if (chunk !== null)
+            client.write(chunk);
+    });
 
-process.stdin.setEncoding('utf8');
-process.stdin.on('readable', function() {
-    const chunk = process.stdin.read();
-    if (chunk !== null)
-        client.write(chunk);
-});
