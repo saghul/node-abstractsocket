@@ -8,7 +8,7 @@
         "test": "./node_modules/.bin/mocha --growl --timeout 10000 test/*.test.js"
     },
     "name": "abstract-socket",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Abstract domain socket support for Node / io.js",
     "main": "lib/abstract_socket",
     "homepage": "https://github.com/saghul/node-abstractsocket",
