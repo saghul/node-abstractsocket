@@ -62,13 +62,13 @@ it passing the name of the abstract socket to bind to and listen, it follows
 the API used for normal Unix domain sockets. NOTE: you must prepend the path with
 the NULL byte ('\0') to indicate it's an abstract socket.
 
-Throws an exception if the `socket(2)` system call fails.
+Emits an error if the `socket(2)` system call fails.
 
 ### AbstractSocketServer.listen(name, [callback]
 
 Binds the server to the specified abstract socket name.
 
-Throws an exception if the `bind(2)` system call fails, or the given `name`
+Emits an error if the `bind(2)` system call fails, or the given `name`
 is invalid.
 
 This function is asynchronous. When the server has been bound, 'listening' event
@@ -81,11 +81,14 @@ Creates a connection to the given `path` in the abstract domain. NOTE: you must
 prepend the path with the NULL byte ('\0') to indicate it's an abstract
 socket.
 
-Returns a new and connected net.Socket object.
+Returns a new net.Socket object.
 
-Throws an exception if the `socket(2)` or `connect(2)` system calls fail,
+Emits an error if the `socket(2)` or `connect(2)` system calls fail,
 or the given `name` is invalid.
 
+## Tests
+
+Run tests with `npm test`.
 
 ## Thanks
 
