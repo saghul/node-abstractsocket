@@ -1,6 +1,6 @@
 'use strict';
 
-const client = require('../lib/abstract_socket')
+const client = require('../lib/abstract_socket.js')
     .connect('\0foo2', () => { //'connect' listener
         console.log('client connected');
     })

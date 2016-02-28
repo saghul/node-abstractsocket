@@ -4,6 +4,9 @@
         "email": "saghul@gmail.com",
         "url": "http://bettercallsaghul.com"
     },
+    "scripts": {
+        "test": "./node_modules/.bin/mocha --growl --timeout 2000 test/*.test.js"
+    },
     "name": "abstract-socket",
     "version": "1.1.0",
     "description": "Abstract domain socket support for Node / io.js",
@@ -20,6 +23,10 @@
     "dependencies": {
         "bindings": "^1.2.1",
         "nan": "^2.0.9"
+    },
+    "devDependencies": {
+        "should": "8.2.x",
+        "mocha": "2.4.x"
     },
     "os": [
         "linux"
