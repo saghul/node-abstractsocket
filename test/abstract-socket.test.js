@@ -24,6 +24,12 @@ describe('server', function() {
                 done();
             });
         });
+
+        it('should stop listening when close is called', () => new Promise(resolve => {
+            server.close(resolve);
+        })
+            .then(() => exec('lsof -U'))
+            .then(output => output.should.not.containEql(`@${SOCKET_NAME.slice(1)}`)));
     });
 
     describe('client connections', function() {
