@@ -7,8 +7,8 @@ const abs = require('../lib/abstract_socket.js');
 const SOCKET_NAME = '\0test312';
 const SOME_DATA = 'asdqq\n';
 
-describe('server', () => {
-    describe('listening', () => {
+describe('server', function() {
+    describe('listening', function() {
         let server;
         beforeEach(() => (server = abs.createServer()) && server.listen(SOCKET_NAME));
         afterEach(() => server.close());
@@ -26,7 +26,7 @@ describe('server', () => {
         });
     });
 
-    describe('client connections', () => {
+    describe('client connections', function() {
         let server;
         beforeEach(() => (server = abs.createServer()) && server.listen(SOCKET_NAME));
         afterEach(() => server.close());
@@ -47,7 +47,7 @@ describe('server', () => {
         });
     });
 
-    describe('messages', () => {
+    describe('messages', function() {
         let server;
         beforeEach(() => (server = abs.createServer()) && server.listen(SOCKET_NAME));
         afterEach(() => server.close());
@@ -63,11 +63,42 @@ describe('server', () => {
                 client.write(SOME_DATA);
             });
         });
+
+        it('should be sent from the server', done => {
+            server.on('connection', client => {
+                client.end(SOME_DATA);
+            });
+            const client = abs.connect(SOCKET_NAME);
+            client.on('data', data => {
+                data.toString().should.equal(SOME_DATA);
+                done();
+            });
+        });
+
+        it('should be able to send large data', done => {
+            const LENGTH = 65537;
+            const FILL_CHAR = 't';
+            const buf = new Buffer(LENGTH);
+            buf.fill(FILL_CHAR);
+            server.on('connection', client => {
+                client.end(buf);
+            });
+            const client = abs.connect(SOCKET_NAME);
+            let res = new Buffer(0);
+            client.on('data', data => {
+                res = Buffer.concat([res, data], res.length + data.length);
+            });
+            client.on('end', () => {
+                res.length.should.equal(LENGTH);
+                res.toString().split('').forEach(t => t.should.equal(FILL_CHAR));
+                done();
+            });
+        });
     });
 });
 
-describe('client', () => {
-    describe('should emit error', () => {
+describe('client', function() {
+    describe('should emit error', function() {
         it('when connecting to a non existent socket', done => {
             abs.connect('\0non-existent-socket').on('error', () => done());
         });
@@ -77,7 +108,7 @@ describe('client', () => {
         });
     });
 
-    describe('connect callback', () => {
+    describe('connect callback', function() {
         let server;
         beforeEach(() => (server = abs.createServer()) && server.listen(SOCKET_NAME));
         afterEach(() => server.close());
@@ -96,7 +127,7 @@ describe('client', () => {
         });
     });
 
-    describe('messages', () => {
+    describe('messages', function() {
         let server;
         beforeEach(() => (server = abs.createServer()) && server.listen(SOCKET_NAME));
         afterEach(() => server.close());
@@ -110,6 +141,39 @@ describe('client', () => {
             });
             const client = abs.connect(SOCKET_NAME, () => {
                 client.write(SOME_DATA);
+            });
+        });
+
+        it('should be able to send large data', done => {
+            const LENGTH = 65537;
+            const FILL_CHAR = 't';
+            const buf = new Buffer(LENGTH);
+            buf.fill(FILL_CHAR);
+            server.on('connection', client => {
+                let res = new Buffer(0);
+                client.on('data', data => {
+                    res = Buffer.concat([res, data], res.length + data.length);
+                    if (res.length < LENGTH) {
+                        return;
+                    }
+                    res.length.should.equal(LENGTH);
+                    res.toString().split('').forEach(t => t.should.equal(FILL_CHAR));
+                    done();
+                });
+            });
+            const client = abs.connect(SOCKET_NAME, () => {
+                client.end(buf);
+            });
+        });
+
+        it('should be received from the server', done => {
+            server.on('connection', client => {
+                client.end(SOME_DATA);
+            });
+            const client = abs.connect(SOCKET_NAME);
+            client.on('data', data => {
+                data.toString().should.equal(SOME_DATA);
+                done();
             });
         });
     });
