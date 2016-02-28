@@ -1,6 +1,6 @@
 'use strict';
 
-require('../lib/abstract_socket')
+require('../lib/abstract_socket.js')
     .createServer(client => {
         console.log('client connected');
         client.on('end', () => {
