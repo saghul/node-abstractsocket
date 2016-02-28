@@ -18,7 +18,7 @@
         "url": "git://github.com/saghul/node-abstractsocket.git"
     },
     "engines": {
-        "node": ">=0.10.0"
+        "node": ">=4.0.0"
     },
     "dependencies": {
         "bindings": "^1.2.1",
