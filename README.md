@@ -16,9 +16,9 @@ Server:
 
 ```js
 // abstract echo server
-var abs = require('./lib/abstract_socket');
+const abs = require('./lib/abstract_socket');
 
-var server = abs.createServer(function(c) { //'connection' listener
+const server = abs.createServer(function(c) { //'connection' listener
   console.log('client connected');
   c.on('end', function() {
     console.log('client disconnected');
@@ -33,7 +33,7 @@ server.listen('\0foo');
 Client:
 
 ```js
-var abs = require('./lib/abstract_socket');
+const abs = require('./lib/abstract_socket');
 
 var client = abs.connect('\0foo', function() { //'connect' listener
     console.log('client connected');
@@ -45,7 +45,7 @@ client.on('data', function(data) {
 
 process.stdin.setEncoding('utf8');
 process.stdin.on('readable', function() {
-    var chunk = process.stdin.read();
+    const chunk = process.stdin.read();
     if (chunk !== null)
         client.write(chunk);
 });
