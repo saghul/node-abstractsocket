@@ -21,7 +21,6 @@ using v8::Value;
 
 
 NAN_METHOD(Socket) {
-    Nan::HandleScope scope;
     int fd;
     int type;
 
@@ -42,7 +41,6 @@ out:
 
 
 NAN_METHOD(Bind) {
-    Nan::HandleScope scope;
     sockaddr_un s;
     socklen_t namelen;
     int err;
@@ -80,7 +78,6 @@ out:
 
 
 NAN_METHOD(Connect) {
-    Nan::HandleScope scope;
     sockaddr_un s;
     socklen_t namelen;
     int err;
@@ -118,7 +115,6 @@ out:
 
 
 NAN_METHOD(Close) {
-    Nan::HandleScope scope;
     int err;
     int fd;
 
