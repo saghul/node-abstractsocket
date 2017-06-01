@@ -20,34 +20,6 @@ using v8::String;
 using v8::Value;
 
 
-#if !defined(SOCK_NONBLOCK)
-void SetNonBlock(int fd) {
-    int flags;
-    int r;
-
-    flags = fcntl(fd, F_GETFL);
-    assert(flags != -1);
-
-    r = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-    assert(r != -1);
-}
-#endif
-
-
-#if !defined(SOCK_CLOEXEC)
-void SetCloExec(int fd) {
-    int flags;
-    int r;
-
-    flags = fcntl(fd, F_GETFD);
-    assert(flags != -1);
-
-    r = fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
-    assert(r != -1);
-}
-#endif
-
-
 NAN_METHOD(Socket) {
     Nan::HandleScope scope;
     int fd;
@@ -56,25 +28,13 @@ NAN_METHOD(Socket) {
     assert(info.Length() == 0);
 
     type = SOCK_STREAM;
-#if defined(SOCK_NONBLOCK)
-    type |= SOCK_NONBLOCK;
-#endif
-#if defined(SOCK_CLOEXEC)
-    type |= SOCK_CLOEXEC;
-#endif
+    type |= SOCK_NONBLOCK | SOCK_CLOEXEC;
 
     fd = socket(AF_UNIX, type, 0);
     if (fd == -1) {
         fd = -errno;
         goto out;
     }
-
-#if !defined(SOCK_NONBLOCK)
-    SetNonBlock(fd);
-#endif
-#if !defined(SOCK_CLOEXEC)
-    SetCloExec(fd);
-#endif
 
 out:
     info.GetReturnValue().Set(fd);
