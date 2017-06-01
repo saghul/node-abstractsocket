@@ -1,7 +1,3 @@
-// -D_GNU_SOURCE makes SOCK_NONBLOCK etc. available on linux
-#undef  _GNU_SOURCE
-#define _GNU_SOURCE
-
 #if !defined(__linux__)
 # error "Only Linux is supported"
 #endif
