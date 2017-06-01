@@ -1,7 +1,7 @@
 {
   'targets': [
     {
-      'target_name': 'abstract_socket',
+      'target_name': 'bindings',
       'defines': [ '_GNU_SOURCE=1' ],
       'sources': [ 'src/abstract_socket.cc' ],
       'include_dirs': [
