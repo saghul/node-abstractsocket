@@ -22,11 +22,11 @@
     },
     "dependencies": {
         "bindings": "^1.2.1",
-        "nan": "^2.0.9"
+        "nan": "^2.12.1"
     },
     "devDependencies": {
-        "should": "11.x",
-        "mocha": "3.x"
+        "mocha": "3.x",
+        "should": "11.x"
     },
     "os": [
         "linux"
