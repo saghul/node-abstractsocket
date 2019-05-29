@@ -1,8 +1,8 @@
 {
     "author": {
         "name": "Saúl Ibarra Corretgé",
-        "email": "saghul@gmail.com",
-        "url": "http://bettercallsaghul.com"
+        "email": "s@saghul.net",
+        "url": "https://bettercallsaghul.com"
     },
     "scripts": {
         "test": "./node_modules/.bin/mocha --growl --timeout 10000 test/*.test.js"
