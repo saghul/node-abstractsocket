@@ -49,8 +49,8 @@ NAN_METHOD(Bind) {
 
     assert(info.Length() == 2);
 
-    fd = info[0]->Int32Value();
-    String::Utf8Value path(info[1]);
+    fd = info[0]->Int32Value(Nan::GetCurrentContext()).FromJust();
+    Nan::Utf8String path(info[1]);
 
     if ((*path)[0] != '\0') {
         err = -EINVAL;
@@ -86,8 +86,8 @@ NAN_METHOD(Connect) {
 
     assert(info.Length() == 2);
 
-    fd = info[0]->Int32Value();
-    String::Utf8Value path(info[1]);
+    fd = info[0]->Int32Value(Nan::GetCurrentContext()).FromJust();
+    Nan::Utf8String path(info[1]);
 
     if ((*path)[0] != '\0') {
         err = -EINVAL;
@@ -119,7 +119,7 @@ NAN_METHOD(Close) {
     int fd;
 
     assert(info.Length() == 1);
-    fd = info[0]->Int32Value();
+    fd = info[0]->Int32Value(Nan::GetCurrentContext()).FromJust();
 
     // POSIX 2008 states that it unspecified what the state of a file descriptor
     // is if close() is interrupted by a signal and fails with EINTR.  This is a
