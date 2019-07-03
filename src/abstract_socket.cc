@@ -165,14 +165,14 @@ NAN_METHOD(Close) {
 
 
 void Initialize(Local<Object> target) {
-    target->Set(Nan::New("socket").ToLocalChecked(),
-                Nan::GetFunction(Nan::New<FunctionTemplate>(Socket)).ToLocalChecked());
-    target->Set(Nan::New("bind").ToLocalChecked(),
-                Nan::GetFunction(Nan::New<FunctionTemplate>(Bind)).ToLocalChecked());
-    target->Set(Nan::New("connect").ToLocalChecked(),
-                Nan::GetFunction(Nan::New<FunctionTemplate>(Connect)).ToLocalChecked());
-    target->Set(Nan::New("close").ToLocalChecked(),
-                Nan::GetFunction(Nan::New<FunctionTemplate>(Close)).ToLocalChecked());
+    Nan::Set(target, Nan::New("socket").ToLocalChecked(),
+             Nan::GetFunction(Nan::New<FunctionTemplate>(Socket)).ToLocalChecked());
+    Nan::Set(target, Nan::New("bind").ToLocalChecked(),
+             Nan::GetFunction(Nan::New<FunctionTemplate>(Bind)).ToLocalChecked());
+    Nan::Set(target, Nan::New("connect").ToLocalChecked(),
+             Nan::GetFunction(Nan::New<FunctionTemplate>(Connect)).ToLocalChecked());
+    Nan::Set(target, Nan::New("close").ToLocalChecked(),
+             Nan::GetFunction(Nan::New<FunctionTemplate>(Close)).ToLocalChecked());
 }
 
 
